@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Key Mapper (Dark Theme)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      margin: 20px;
+    }
+    textarea, input {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+      border: 1px solid #333;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>JSON Key Mapper</h1>
+
+  <label for="jsonInput">Input JSON:</label>
+  <textarea id="jsonInput" rows="8" placeholder="Paste your JSON here..."></textarea>
+
+  <label for="keyMapper">Keys to Extract (comma-separated):</label>
+  <input id="keyMapper" type="text" placeholder="Enter keys to extract (e.g., key1, key2)">
+
+  <button id="processButton">Process JSON</button>
+
+  <br />
+  <br />
+  <label for="jsonOutput">Output JSON:</label>
+  <textarea id="jsonOutput" rows="8" readonly placeholder="Filtered JSON will appear here..."></textarea>
+
+  <script>
+    document.getElementById('processButton').addEventListener('click', () => {
+      const inputJson = document.getElementById('jsonInput').value.trim();
+      const keyMapper = document.getElementById('keyMapper').value.trim().split(',');
+
+      try {
+        const parsedJson = JSON.parse(inputJson);
+
+        if (!Array.isArray(parsedJson)) {
+          throw new Error('Input JSON must be an array of objects.');
+        }
+
+        const filteredArray = parsedJson.map(item => {
+          const filteredItem = {};
+          keyMapper.forEach(key => {
+            const trimmedKey = key.trim();
+            if (item.hasOwnProperty(trimmedKey)) {
+              filteredItem[trimmedKey] = item[trimmedKey];
+            }
+          });
+          return filteredItem;
+        });
+
+        document.getElementById('jsonOutput').value = JSON.stringify(filteredArray, null, 2);
+      } catch (error) {
+        alert('Invalid JSON format or structure! Please correct it and try again.');
+      }
+    });
+  </script>
+</body>
+</html>
